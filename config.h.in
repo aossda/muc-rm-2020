@@ -1,0 +1,9 @@
+#cmakedefine USE_INDUSTRY_CAMERA
+
+// == 下面试测试用的
+#cmakedefine01 CAMERA_ON
+#cmakedefine01 CAMERA_OF
+
+#ifndef __${VAR}___@VAR@
+
+#endif
