@@ -39,7 +39,7 @@ public:
 	//Armor armor;
     bool use_SVM(cv::Mat& frame, Armor& armor);
 
-	//-------------------Euclidean Distance----------------//ŷʽ����
+	//-------------------Euclidean Distance----------------//欧式距离
 	Mat  tem_image;
 	Mat tmp[8];
 	string filename = "..//img//";

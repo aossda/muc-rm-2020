@@ -87,7 +87,7 @@ public:
 	vector<Armor> Detect(vector<RotatedRect> &LightBar, vector<Armor>&armor);
 
 	void GetScore(vector<Armor> &armor);
-	void ArmorGrading(vector<Armor>& armors);//2020-���
+	void ArmorGrading(vector<Armor>& armors);//2020
 
 	void Choice(vector<Armor>& armor);
 	void final_choice(vector<Armor>& armor);

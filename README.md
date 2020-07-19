@@ -4,3 +4,6 @@ muc's 2020 code
 thanks to the contribution of all team members!
 
 ECO algorithm was forked from https://github.com/rockkingjy/OpenTracker
+
+building your own `.so` file recommended.
+

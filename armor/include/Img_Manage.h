@@ -8,23 +8,23 @@
 //#define FIND_RED            1
 //#define FIND_BLUE           2
 
-#define FrameCols			640
-#define FrameRows			480
+#define FrameCols         640
+#define FrameRows         480
 
-#define g_nContrastValue	40//100 ����
-#define g_nBrightValue		20//80
-#define KernelX				3
-#define KernelY				3
-#define ContoursSizeMin		15  //at least 6
+#define g_nContrastValue  40 //100 不变
+#define g_nBrightValue    20   //80
+#define KernelX           3
+#define KernelY           3
+#define ContoursSizeMin   15 //at least 6
 
-#define LightBarProMin		1
-#define LightBarProMax		10
+#define LightBarProMin    1
+#define LightBarProMax    10
 
 // Binary and Thres
-#define BinaryThresBlue			150   //200		2 ֵ������
-#define BinaryThresRed          120
-#define redThres			30     //70;	��ɫ������ȡ
-#define blueThres			70
+#define BinaryThresBlue   150 //200 二值化参数
+#define BinaryThresRed    120
+#define redThres          30 //70; 红色参数提取
+#define blueThres         70
 using namespace std;
 using namespace cv;
 
@@ -32,11 +32,11 @@ class ImgManage
 {
 public:
 	cv::Mat frame0, frame, gray,res_norm, xxx;;
-	Mat DstImg;//		����������ͼ
+	Mat DstImg; //初步处理结果图
 	bool debug = 0;
 	cv::Mat RgbChannels[3];
 
-	//------------���������--------------//
+	//------------开闭运算核--------------//
 	cv::Mat thresDilate = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 4));
 	cv::Mat thresErode = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(1, 1));
 	cv::Mat colorDilate = cv::getStructuringElement(cv::MORPH_RECT, cv::Size(3, 6));
@@ -69,7 +69,8 @@ public:
 	//------------------------------get image----------------------------//
 	void lightExam(vector<vector<Point> > fgcontours, vector<vector<Point> > bluecontoursl, Mat* dst, Mat fgImg);
 	void LightBarExtract(Rect LightBarRect, Mat BlueImg, Mat Binaryimg, Mat& DstImg);
-    bool isInside(Rect &rect1, Rect &rect2);
+    //以蓝色发光物体为大框，如果发光物体在蓝色发光物体内部则圈出发光物体
+	bool isInside(Rect &rect1, Rect &rect2);
 	void input_operation(cv::Mat& input, cv::Mat& BinaryImg, cv::Mat& colorImg, int &mode);
 	cv::Mat get_dstimg(cv::Mat& input, cv::Mat& BinaryImg, cv::Mat& colorImg);
 	void get_Lightbar();

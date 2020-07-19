@@ -21,7 +21,7 @@ bool Num_Select::depart_img(cv::Mat& frame, Armor& armor)
 	//{
 	//	armor.pt[i].x *= 2;
 	//	armor.pt[i].y *= 2;
-	//}//			??????Ïë²»ÆğÀ´ÎªÊ²Ã´ÓĞÕâ¸öÒÔ¼°Æä×÷ÓÃ
+	//}//     ??????æƒ³ä¸èµ·æ¥ä¸ºä»€ä¹ˆæœ‰è¿™ä¸ªä»¥åŠå…¶ä½œç”¨
 
 	//DrawPoint(frame, armor.pt);
 
@@ -99,8 +99,8 @@ void Num_Select::Save_Picture(cv::Mat aImage)
 		oss << "..//img//";//"/home/nvidia/opencv/findred/image/";
 		imgNum += 1;
 		oss << imgNum << ".jpg";
-		imwrite(oss.str(), aimaa);//±£´æ
-		oss.str("");//Ã¿´ÎÓÃÁËoss×Ö·û´®ºó£¬Çå¿Õ×Ö·û´®ÄÚÈİ
+		imwrite(oss.str(), aimaa);//ä¿å­˜
+		oss.str("");//æ¯æ¬¡ç”¨äº†osså­—ç¬¦ä¸²åï¼Œæ¸…ç©ºå­—ç¬¦ä¸²å†…å®¹
 
 		cout << "ing..\n";
 

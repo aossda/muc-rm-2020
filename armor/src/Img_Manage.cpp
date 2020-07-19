@@ -65,17 +65,17 @@ void ImgManage::ContrastAndBright(Mat& img, Mat& g_dstImage)    // change bright
 	uchar* ps = 0;
 
 	g_dstImage = Mat::zeros(img.size(), img.type());
-	// ����forѭ����ִ������ g_dstImage(i,j) = a*g_srcImage(i,j) + b
+	// 三个for循环，执行运算 g_dstImage(i,j) = a*g_srcImage(i,j) + b
 	for (int i = 0; i < rows; ++i)
 	{
-		// ��ȡ��ָ��
+		// 获取行指针
 		pRow = img.ptr<uchar>(i);
 		ps = g_dstImage.ptr<uchar>(i);
 		for (int j = 0; j < cols; ++j)
 		{
-			if (channels == 1) //��ͨ��
+			if (channels == 1) //单通道
 				ps[j] = 0.01 * g_nContrastValue * pRow[j] + g_nBrightValue;
-			else if (channels == 3) //��ͨ��
+			else if (channels == 3) //三通道
 			{
 				pRow[j * 3] = 0.01 * g_nContrastValue * pRow[j * 3] + g_nBrightValue;
 				pRow[j * 3 + 1] = 0.01 * g_nContrastValue * pRow[j * 3 + 1] + g_nBrightValue;
@@ -262,7 +262,7 @@ void ImgManage::LightBarExtract(Rect LightBarRect, Mat BlueImg, Mat Binaryimg, M
 	}
 }
 
-//void Threshold(int, void*)//debug ��ֵ�� ������ �ص�����
+//void Threshold(int, void*)//debug 二值化 闭运算 回调函数
 //{
 //	Mat gray;
 //	cvtColor(frame, gray, CV_RGB2GRAY);
@@ -273,7 +273,7 @@ void ImgManage::LightBarExtract(Rect LightBarRect, Mat BlueImg, Mat Binaryimg, M
 //	erode(BinaryImg, BinaryImg, thresErode);
 //}
 //
-//void ExtractRed(int, void*)//debug �� ��ֵ�� ������ �ص�����
+//void ExtractRed(int, void*)//debug 红 二值化 闭运算 回调函数
 //{
 //	threshold(colorImg, colorImg, redThres, 255, CV_THRESH_BINARY);
 //	dilate(colorImg, colorImg, colorDilate);

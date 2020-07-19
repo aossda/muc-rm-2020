@@ -64,10 +64,10 @@ vector<Armor> ArmorDetect::Detect(vector<RotatedRect>& LightBar, vector<Armor>& 
 			if (debug)
 			{
 				//cout<<"abs(AngleI - AngleJ):"<<abs(AngleI - AngleJ)<<endl;
-				//cout <<"100 *LightBar��height)"<< 100 * max(LightBar[i].size.height, LightBar[j].size.height) << endl;
+				//cout <<"100 *LightBar的height)"<< 100 * max(LightBar[i].size.height, LightBar[j].size.height) << endl;
 				//cout << "HeightThres * min(LightBar[i].size.height, LightBar[j].size.height)" << HeightThres* min(LightBar[i].size.height, LightBar[j].size.height) << endl;
 
-				//cout << "100 *LightBar��size.width" << 100 * max(LightBar[i].size.height, LightBar[j].size.height) << endl;
+				//cout << "100 *LightBar的size.width" << 100 * max(LightBar[i].size.height, LightBar[j].size.height) << endl;
 				//cout << "WidthThres * min(LightBar[i].size.width, LightBar[j].size.width)" << WidthThres * min(LightBar[i].size.width, LightBar[j].size.width) << endl;
 				circle(framex, LightBar[i].center, 2, Scalar(255, 0, 0), 2);
 				circle(framex, LightBar[j].center, 2, Scalar(255, j*10+100, 0), 2);

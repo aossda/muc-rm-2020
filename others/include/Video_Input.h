@@ -9,7 +9,7 @@
 #define Picture         3
 #define PI  3.1416
 
-#define INPUT_VIDEO		"..//video//1.mp4"//"/home/nvidia/findblue/video/1.mp4"//�Ͻ��ӽ�-�Կ�������ѧNO4-part1.avi"
+#define INPUT_VIDEO		"..//video//1.mp4"
 
 #endif //FINDBLUE_VIDEO_INPUT_H
 
