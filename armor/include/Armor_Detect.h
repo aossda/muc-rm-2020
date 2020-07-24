@@ -92,27 +92,29 @@ public:
 	void Choice(vector<Armor>& armor);
 	void final_choice(vector<Armor>& armor);
 
-//Traking
+//TRACKING
+	bool generate_bbox(Armor&, Rect2f &bbox);
+
+	bool if_enable_tracking;
 	void tracking(Mat& frame);
 	eco::ECO * ecotracker = NULL;
 	eco::EcoParameters parameters;
+	//Ptr<Tracker> tracker;
+
 	bool end_tracking();
-	//Rect2d bbox;
-	Rect2f bbox;
+	bool enable_tracking();
+	bool disable_tracking();
+	//Rect2d bbox; //used for OpenCV's KCF tracker
+	Rect2f bbox; //used for ECO tracker
 	int frame_cols = 640;
 	int frame_rows = 480;
-	bool generate_bbox(Armor&, Rect2f &bbox);
-	//bool if_tracking = false;
-	//bool if_init = false;
+
 	Armor the_target;
-	Ptr<Tracker> tracker;
-	//int tot_fail;
-	//int tot_tracks;
-	//int fails_in_a_raw;
-	int regular_check;
 	Point2d last_center;
 	bool previous_exist = false;
+
 	int last_tracked_frames = 16;
 
+	void clean();
 	ArmorDetect(){};
 };

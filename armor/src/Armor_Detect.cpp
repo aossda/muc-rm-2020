@@ -15,12 +15,11 @@ void ArmorDetect::Armor_Contours(vector<RotatedRect>& LightBar, cv::Mat& frame)
 	Detect(LightBar, armor);
 	//GetScore(armor);
 	//Choice(armor);
-
 	ArmorGrading(armor);
 	final_choice(armor);
 
-	imshow("viewing",frame0);
-	if (status == INIT_TRACKING) tracking(frame0);
+	//imshow("viewing",frame0);
+	if (if_enable_tracking && status == INIT_TRACKING) tracking(frame0);
 }
 
 float ArmorDetect::AngleConvert(float RowAngle)    //convert to poleAngle
@@ -436,7 +435,6 @@ void ArmorDetect::tracking(Mat& frame)
 	static int tot_tracks;
 	static int fails_in_a_raw;
 
-	//if (if_tracking == false) return;
 	if (status == INIT_TRACKING)
 	{
 		if (!generate_bbox(the_target, bbox)){
@@ -446,13 +444,11 @@ void ArmorDetect::tracking(Mat& frame)
 	}
 	/*
 	if (bbox.tl().x < 2 || bbox.tl().y < 2 {
-		if_tracking = false; 
-		if_init = false;
+		end_tracking();
 		return;
 	}
 	if (bbox.br().x > frame.cols || bbox.br().y > 0.95 * frame.rows) {
-		if_tracking = false;
-		if_init = false;
+		end_tracking();
 		return;
 	}*/
 	
@@ -465,8 +461,7 @@ void ArmorDetect::tracking(Mat& frame)
 
 	/*
 	if (bbox.area() > 0.38 * frame.rows * frame.cols) {
-		if_tracking = false;
-		if_init = false;
+		end_tracking();
 		return;
 	}*/
 
@@ -507,8 +502,7 @@ void ArmorDetect::tracking(Mat& frame)
 			Point2d p1 = getRectCenter(tbbox);
 			Point2d p2 = getRectCenter(bbox);
 			if(abs(p1.x - p2.x) > 0.03 * frame.cols || abs(p1.y - p2.y) > 0.03 * frame.rows) {
-				if_tracking = false;
-				if_init = false;
+				end_tracking();
 				return;
 			}
 		}*/
@@ -517,7 +511,7 @@ void ArmorDetect::tracking(Mat& frame)
 
 		float fps = getTickFrequency() / ((double)getTickCount() - timer);
 		if (!ok) {
-			tot_fail++;
+			++tot_fail;
 			++fails_in_a_raw;
 			cout << "! Tracking fails ";
 			//putText(frame, "Tracking failure detected", Point(100, 80), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 0, 255), 2);
@@ -533,7 +527,7 @@ void ArmorDetect::tracking(Mat& frame)
 		cout<<" @FPS: "<<(int)fps;
 		cout << "  <time> :" << 1000 * ((double)cv::getTickCount() - timer) / cv::getTickFrequency() << " ms\n";
 	}
-/**/
+
 	if (bbox.tl().x < 0 || bbox.tl().y < 0) {
 		end_tracking(); 
 	}
@@ -548,9 +542,7 @@ void ArmorDetect::tracking(Mat& frame)
 	else rectangle(frame, bbox, Scalar(0, 0, 255), 2, 1); //print in red
 	circle(frame, getRectCenter(bbox), 3, Scalar(0, 0, 255), -1); //print circle
 	
-	//double timer = (double)getTickCount();
-	imshow("viewing", frame);
-	//cout << "  <time> :" << 1000 * ((double)cv::getTickCount() - timer) / cv::getTickFrequency() << " ms\n";
+	frame0 = frame;
 	
 	if (waitKey(1) == 27){
 		end_tracking();
@@ -576,6 +568,8 @@ void ArmorDetect::final_choice(vector<Armor>& armor)
 		if (antiShake > shakeThres)
 		{
 		}
+
+		previous_exist = false;
 	}
 	/*else
 	{//this place can be optimized
@@ -632,4 +626,25 @@ void ArmorDetect::DrawArmor(Mat& frame, Point2f pt[])
 		line(frame, pt[i], pt[(i + 1) % 4], Scalar(0, 0, 255), 1);
 	}
 	//cv::imshow("xx", frame); cv::waitKey(1);
+}
+
+bool ArmorDetect::enable_tracking()
+{
+	if_enable_tracking = true;
+}
+bool ArmorDetect::disable_tracking()
+{
+	if (if_enable_tracking || status != ARMORFIND)
+	{
+		end_tracking();
+		if_enable_tracking = false;
+	}
+}
+void ArmorDetect::clean()
+{
+	previous_exist = false;
+	if (status == TRACKING) {
+		end_tracking();
+	}
+	status = ARMORFIND;
 }

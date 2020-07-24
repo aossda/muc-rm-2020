@@ -15,11 +15,15 @@ and recovered some comments which are lost because of encoding problems when cod
 
 building your own `.so` file recommended.
 
-make sure OpenCV is installed. 
+Now tracker part only run successfully on **Linux**, and you are now supposed to **enable** tracking function by calling `ArmorDetect::enable_tracking()`, and **disable** it by calling `ArmorDetect::disable_tracking()` whenever you want. We use a `bool` variable `if_enable_tracking` to decide whether to initialize tracker and then change an `ArmorDetect`'s instance's status. 
 
-now tracker part only run successfully on Linux, and we still haven't made it an optional function yet. 
+Also added a function `ArmorDetect::clean()`. Remember to call it before you feed `armorfind` with a new frame. 
 
-put your video in `./video` and rename it as `1.mp4`, or you may change the macro defined at `others/include/Video_Input.h` .
+And, you should ...
+
+- make sure OpenCV is installed. 
+
+- put your video in `./video` and rename it as `1.mp4`, or you may change the macro defined at `others/include/Video_Input.h` .
 
 and then build it
 

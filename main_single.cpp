@@ -42,6 +42,7 @@ int main()
 {
 	InputHead *camera;
 	ArmorDetect armorfind;
+    armorfind.enable_tracking();
 	ImgManage pre_img;
 	Energy energy;
 	cv::Mat datax;
@@ -59,7 +60,7 @@ int main()
 
     while (xxx)
     {
-        int working_mode = ImgManage::FIND_RED;
+        //int working_mode = ImgManage::FIND_RED;
         double t = (double)cv::getTickCount();
 
         scount++;
@@ -85,15 +86,14 @@ int main()
         waitKey(1);//  add jundge code in this place
         if(xx)//armor mode
         {
-            if(armorfind.status == ArmorDetect::ARMORFIND)
-            {
-                pre_img.Pre_Manage(datax, working_mode);
+            if (armorfind.status == ArmorDetect::TRACKING) {
+                armorfind.tracking(datax);
+            } 
+            else {
+                pre_img.Pre_Manage(datax, ImgManage::FIND_RED);
                 armorfind.Armor_Contours(pre_img.Lightbar, datax);
             }
-            else if (armorfind.status == ArmorDetect::TRACKING)
-            {
-                armorfind.tracking(datax);
-            }
+            imshow("viewing",armorfind.frame0);
             //if(armorfind.flag_get)
             //    Send.Angle_Predict(armorfind.target, armorfind.lostNum);
         }
