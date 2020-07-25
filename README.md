@@ -1,4 +1,7 @@
 # muc-rm-2020
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/5d6d0c0528b4482c873ac9c6d7e2e280)](https://app.codacy.com/manual/tsagaanbar/muc-rm-2020?utm_source=github.com&utm_medium=referral&utm_content=tsagaanbar/muc-rm-2020&utm_campaign=Badge_Grade_Settings)
+
 MUC's 2020 code project: **findblue** 
 
 (maybe it's just a temporary bin file name, but I regard it as poetic. and it can be translated into Chinese as "觅蓝")
