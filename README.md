@@ -1,5 +1,7 @@
 # muc-rm-2020
-MUC's 2020 code
+MUC's 2020 code project: **findblue** 
+
+(maybe it's just a temporary bin file name, but I regard it as poetic. and it can be translated into Chinese as "觅蓝")
 
 thanks to the contribution of all team members!
 

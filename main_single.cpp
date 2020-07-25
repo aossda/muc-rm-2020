@@ -18,8 +18,8 @@
 
 #include "others/include/config.h"             //cmake define USE_INDUSTRY_CAMERA in it
 
-#define INPUT  "..//video//1.mp4"   //外部输入源
-//#define INPUT  "..//video//energy2.mp4"   //外部输入源
+//#define INPUT  "..//video//1.mp4"   //外部输入源
+#define INPUT  "..//video//energy2.mp4"   //外部输入源
 
 using namespace std;
 using namespace cv;
@@ -42,12 +42,9 @@ int main()
 {
 	InputHead *camera;
 	ArmorDetect armorfind;
-    armorfind.enable_tracking();
 	ImgManage pre_img;
 	Energy energy;
 	cv::Mat datax;
-	armorfind.parameters.useIcFeature = false;
-	armorfind.parameters.max_score_threshhold = 0.30;
     
     bool xxx = true;
 	long int last_count = 0;//计数最后一次图像数
@@ -82,9 +79,9 @@ int main()
             cout << "Process Thread finished!\n";
             break;
         }*/
-        bool xx = true;
+        bool if_armor_find = false;
         waitKey(1);//  add jundge code in this place
-        if(xx)//armor mode
+        if(if_armor_find)//armor mode
         {
             if (armorfind.status == ArmorDetect::TRACKING) {
                 armorfind.tracking(datax);
@@ -99,13 +96,15 @@ int main()
         }
         else{
             //energy code
-            energy.start(datax);
-            energy.get_target_Kalman();
+            //energy.KalmanFind(datax);
+            energy.Min2XFind(datax);
+            //imshow("frame", energy.binary);
+		    //imshow("Original", energy.image);
         }
         Send.set_Mes();//xxxxxx    send mes //......remember optimize
         //Send.Send_Message();
         time(t);
-        waitKey(20);
+        //waitKey(20);
 	}
 	return 0;
 }

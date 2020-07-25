@@ -12,30 +12,33 @@
 #define FrameRows       480
 #define FrameCols       640
 
-#define stateNum        4
-#define measureNum      2
-
 using namespace std;
 using namespace cv;
 class Energy {
 private:
-
+public:
+    enum {KALMAN, MIN2X};
     bool debug = 1;
     cv::Mat image, binary;
-    vector<cv::Point2d> points;
 
+    //Kalman Algorithm
+    int stateNum = 4;
+    int measureNum = 2;
     KalmanFilter KF;
     Mat processNoise;
     Mat measurement = Mat::zeros(measureNum, 1, CV_32F);
 
     RotatedRect rrect;//target
     cv::Point2d target;
-public:
+
+    void KalmanInit();
+    cv::Point2d KalmanFind(cv::Mat &input);
+    
+    vector<cv::Point2d> points;
+    int LeastSquaresCircleFitting(vector<cv::Point2d>& m_Points, cv::Point2d& Centroid, double& dRadius); //拟合圆函数
+    cv::Point2d Min2XFind(cv::Mat &input);
+    
     Energy();
-    void start(cv::Mat &input);
-    cv::Point2d get_target_min2X();
-    cv::Point2d get_target_Kalman();
-    int LeastSquaresCircleFitting(vector<cv::Point2d>& m_Points, cv::Point2d& Centroid, double& dRadius);
 };
 
 
