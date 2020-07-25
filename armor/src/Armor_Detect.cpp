@@ -648,3 +648,9 @@ void ArmorDetect::clean()
 	}
 	status = ARMORFIND;
 }
+ArmorDetect::ArmorDetect()
+{
+	parameters.useIcFeature = false;
+	parameters.max_score_threshhold = 0.30;
+	enable_tracking();
+}

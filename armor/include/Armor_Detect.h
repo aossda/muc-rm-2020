@@ -116,5 +116,5 @@ public:
 	int last_tracked_frames = 16;
 
 	void clean();
-	ArmorDetect(){};
+	ArmorDetect();
 };
