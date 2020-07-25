@@ -186,15 +186,15 @@ int Energy::LeastSquaresCircleFitting(vector<cv::Point2d>& m_Points, cv::Point2d
         vector<cv::Point2d>::iterator end = m_Points.end();
         for (iter = m_Points.begin(); iter != end; ++iter)
         {
-            X1 = X1 + (*iter).x;
-            Y1 = Y1 + (*iter).y;
-            X2 = X2 + (*iter).x * (*iter).x;
-            Y2 = Y2 + (*iter).y * (*iter).y;
-            X3 = X3 + (*iter).x * (*iter).x * (*iter).x;
-            Y3 = Y3 + (*iter).y * (*iter).y * (*iter).y;
-            X1Y1 = X1Y1 + (*iter).x * (*iter).y;
-            X1Y2 = X1Y2 + (*iter).x * (*iter).y * (*iter).y;
-            X2Y1 = X2Y1 + (*iter).x * (*iter).x * (*iter).y;
+            X1 = X1 + iter->x;
+            Y1 = Y1 + iter->y;
+            X2 = X2 + iter->x * iter->x;
+            Y2 = Y2 + iter->y * iter->y;
+            X3 = X3 + iter->x * iter->x * iter->x;
+            Y3 = Y3 + iter->y * iter->y * iter->y;
+            X1Y1 = X1Y1 + iter->x * iter->y;
+            X1Y2 = X1Y2 + iter->x * iter->y * iter->y;
+            X2Y1 = X2Y1 + iter->x * iter->x * iter->y;
         }
         double C = 0.0;
         double D = 0.0;
