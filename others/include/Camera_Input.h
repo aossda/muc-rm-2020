@@ -15,15 +15,15 @@ using namespace std;
 
 class CameraInput : public InputHead {
 private:
-    unsigned char* g_pRgbBuffer;     //处理后tu xiang shu chu de数据缓存区di zhi
-    int                     iCameraCounts = 1;  //摄像头数量
-    int                     iStatus = -1;         //相机初始化返回值
+    unsigned char*          g_pRgbBuffer;      //处理后图像输出的数据缓存区地址
+    int                     iCameraCounts = 1; //摄像头数量
+    int                     iStatus = -1;      //相机初始化返回值
     tSdkCameraDevInfo       tCameraEnumList;   //相机列表
     int                     hCamera;           //相机句柄
     tSdkCameraCapbility     tCapability;       //设备描述信息
-    tSdkFrameHead           sFrameInfo;        //输入图像的zhen头信息
-    BYTE* pbyBuffer;         //输出图像数据的缓冲区地址
-    IplImage*				iplImage = NULL;
+    tSdkFrameHead           sFrameInfo;        //输入图像的帧头信息
+    BYTE*                   pbyBuffer;         //输出图像数据的缓冲区地址
+    IplImage*               iplImage = NULL;
     int                     channel = 3;
 
 public:

@@ -112,8 +112,8 @@ void ImgManage::input_operation(cv::Mat& input, cv::Mat& BinaryImg, cv::Mat& col
 		//-------------------------------------extract blue------------------------------------//
 		//if(mode == FIND_BLUE) subtract(RgbChannels[0], RgbChannels[2], colorImg);       //Bchannel - Rchannel(BGR)
 		//else if (mode == FIND_RED) subtract(RgbChannels[2], RgbChannels[0], colorImg); 
-		if(mode == FIND_BLUE) subtract(RgbChannels[0], RgbChannels[1], colorImg);       //Bchannel - Rchannel(BGR)
-		else if (mode == FIND_RED) subtract(RgbChannels[2], RgbChannels[1], colorImg);   
+		if(mode == FIND_BLUE) subtract(RgbChannels[0], RgbChannels[2], colorImg);       //Bchannel - Rchannel(BGR)
+		else if (mode == FIND_RED) subtract(RgbChannels[2], RgbChannels[0], colorImg);   
 		if(mode==FIND_BLUE)
 		    threshold(colorImg, colorImg, blueThres, 255, CV_THRESH_BINARY);
         else if(mode==FIND_RED)
