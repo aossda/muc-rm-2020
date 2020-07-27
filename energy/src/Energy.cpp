@@ -105,7 +105,7 @@ cv::Point2d Energy::KalmanFind(cv::Mat & image)
     if (debug)
     {
         imshow("binary", binary);
-        imshow("view", image);
+        //imshow("view", image);
         cout<<"target :"<< rrect.center <<endl;
         waitKey(1);
     }
@@ -160,7 +160,7 @@ cv::Point2d Energy::Min2XFind(cv::Mat & image)
     if(debug)
     {
         imshow("binary", binary);
-        imshow("view", image);
+        //imshow("view", image);
         waitKey(1);
     }
     return target;
