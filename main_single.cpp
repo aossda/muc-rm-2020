@@ -18,9 +18,6 @@
 
 #include "others/include/config.h"             //cmake define USE_INDUSTRY_CAMERA in it
 
-//#define INPUT  "..//video//1.mp4"   //外部输入源
-#define INPUT  "..//video//energy2.mp4"   //外部输入源
-
 using namespace std;
 using namespace cv;
 
@@ -37,6 +34,13 @@ void time(double& t)
 {
 	cout << "<time> :" << 1000 * ((double)cv::getTickCount() - t) / cv::getTickFrequency() << " ms\n\n";
 }
+void releaseInputHead(InputHead* & ptr)
+{
+    if (ptr) {
+        delete (ptr);
+        ptr = nullptr;
+    }
+}
 
 int main()
 {
@@ -48,22 +52,30 @@ int main()
     
     bool xxx = true;
 	long int last_count = 0;//计数最后一次图像数
-	string extrainput = INPUT;
+
 #ifdef USE_INDUSTRY_CAMERA
 	camera = new CameraInput();
 #else
-    camera = new VideoInput(extrainput);
+    camera = new VideoInput("..//video//1.mp4");
+    //camera = new VideoInput("..//video//energy1.mp4");
 #endif
-
+    //VideoWriter output("..//video//sample.mp4",CV_FOURCC('A','V','C','1'),30,Size(640,480));
+    //armorfind.disable_tracking();
+    //char keystroke = '\0';
     while (xxx)
     {
         //int working_mode = ImgManage::FIND_RED;
         double t = (double)cv::getTickCount();
 
         scount++;
-        camera->read(datax);
+        bool ok = camera->read(datax);
         //datax = imread("..//video//2.png");
         //resize(datax,datax,Size(640,480));
+        if (!ok) {
+            releaseInputHead(camera);
+            break;
+        }
+
         imshow("in", datax); waitKey(1);
 
         if (scount <= 250)//		跳过前xxx帧图像
@@ -79,7 +91,7 @@ int main()
             cout << "Process Thread finished!\n";
             break;
         }*/
-        bool if_armor_find = false;
+        bool if_armor_find = true;
         waitKey(1);//  add jundge code in this place
         if(if_armor_find)//armor mode
         {
@@ -91,6 +103,7 @@ int main()
                 armorfind.Armor_Contours(pre_img.Lightbar, datax);
             }
             imshow("viewing",armorfind.frame0);
+            //output.write(armorfind.frame0);
             //if(armorfind.flag_get)
             //    Send.Angle_Predict(armorfind.target, armorfind.lostNum);
         }
@@ -99,12 +112,17 @@ int main()
             //energy.KalmanFind(datax);
             energy.Min2XFind(datax);
             //imshow("frame", energy.binary);
-		    //imshow("Original", energy.image);
+		    imshow("viewing", energy.image);
+            //output.write(energy.image);
         }
         Send.set_Mes();//xxxxxx    send mes //......remember optimize
         //Send.Send_Message();
         time(t);
-        //waitKey(20);
+        //keystroke = (char)waitKey(1);
+        //if (keystroke == 'e') break;
+        waitKey(20);
 	}
+    releaseInputHead(camera);
+    //output.release();
 	return 0;
 }
