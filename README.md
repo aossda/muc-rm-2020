@@ -35,12 +35,13 @@ make
 ../bin/findblue
 ```
 
-
-
 ## Notes
 
-when uploaded for the first time:
+When uploaded for the first time:
 
 - changed the encoding of some files to UTF-8
-
 - recovered some lost comments due to encoding problems when coding 
+
+
+
+As for loading parameters from file, I'm preparing to use [TOML](https://github.com/toml-lang/toml). Different implementations can be found in [TOML Official Wiki](https://github.com/toml-lang/toml/wiki). I'm planning to use [this](https://github.com/marzer/tomlplusplus) one.
