@@ -8,13 +8,13 @@
 
 总工程大致结构图：https://www.processon.com/view/link/5eb8aa6b0791290fe0550e37
 
-<img src=".\images\main-structure.jpg" alt="main-structure"  />
+<img src=".\images\main-structure.jpg" alt="main-structure" style="zoom: 25%;" />
 
 总工程预计**两个线程**进行，结构如图所示。
 
 运行流程图预计如图所示：https://www.processon.com/view/link/5eb8a9e37d9c08156c331a89
 
-<img src=".\images\program-flow-chart.jpg" alt="program-flow-chart" style="zoom:50%;" />
+<img src=".\images\program-flow-chart.jpg" alt="program-flow-chart" style="zoom: 25%;" />
 
 （注：两图使用ProcessOn在线工具完成）
 
@@ -120,7 +120,6 @@ muc-rm-2020
    - 对图像进行灰度处理bgr2gray，然后进行归一化normalize。对归一化后图像进行二值化处理，并进行一次闭运算，除去近距离的小黑洞（务必不要使用开运算，删去远距离灯条！）。
    - 流程结束。
    
-
 3. **获取部分轮廓，并使用过程图区分红蓝**
 
    ```cpp
