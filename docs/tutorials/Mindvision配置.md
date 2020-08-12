@@ -6,13 +6,13 @@
 
 ## Visual Studio 2019安装教程：
 
-登录**迈德威视**官网 http://www.mindvision.com.cn/index.aspx
+登录**迈德威视**官网 [http://www.mindvision.com.cn/index.aspx](http://www.mindvision.com.cn/index.aspx)
 
 进入"服务支持"->"文档下载"/"软件下载"
 
 建议下载文档与软件。
 
-软件下载：（windows包）[http://www.mindvision.com.cn/uploadfiles/SDK/MindVision%20Camera%20Platform%20Setup(2.1.10.124).exe](http://www.mindvision.com.cn/uploadfiles/SDK/MindVision Camera Platform Setup(2.1.10.124).exe)
+软件下载：（windows包） [http://www.mindvision.com.cn/uploadfiles/SDK/MindVision%20Camera%20Platform%20Setup(2.1.10.124).exe](http://www.mindvision.com.cn/uploadfiles/SDK/MindVision%20Camera%20Platform%20Setup(2.1.10.124).exe)
 
 然后进行安装。记住安装位置。
 
@@ -48,7 +48,6 @@
    E:\SourceFile\MindVision\Demo\VC++\OpenCV
    ```
 
-   
 
 3. 打开 **链接器** -> **输入**：
 
@@ -58,7 +57,6 @@
 
    之后就配置好了。
 
- 
 
 4. 测试时可以试试直接运行模板，也可以打开：
 
@@ -80,15 +78,13 @@
    tar -xzvf mimd***
    ```
 
-   
-
 3. 进入文件夹
 
    ```bash
    sudo install.sh
    ```
 
-4. **（这一步对于Jetson开发才需要，正常的PC链接库就不用替换了）**更改so文件，由于`install.sh`复制的都是`x86`或`x64`平台的链接库，这里改成`arm64`的
+4. （**这一步对于Jetson开发才需要，正常的PC链接库就不用替换了**）更改so文件，由于`install.sh`复制的都是`x86`或`x64`平台的链接库，这里改成`arm64`的
 
    命令行输入
 
