@@ -19,6 +19,7 @@ private:
 public:
     VideoInput();
     VideoInput(const std::string &input);
+    ~VideoInput();
     bool init() final;
     bool read(cv::Mat& src) final;
 };

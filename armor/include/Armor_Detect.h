@@ -38,6 +38,8 @@ class ArmorDetect
 public:
 	
 	enum {DEFAULT, TRACKING, INIT_TRACKING, ARMORFIND};
+	bool print_candidates = true;
+	bool print_armor_data = true;
 	int status = ARMORFIND;
 	ostringstream oss;
 	float ArmorProMin = 0.7, ArmorProMax = 4; //frame saved count
@@ -53,7 +55,7 @@ public:
 	float lastdata = 10;
 	int lastfire = 10;
 
-	Point2f pt[4];
+	//Point2f pt[4];
 
 	Num_Select SVM;
     Armor lastArmor;
@@ -82,7 +84,8 @@ public:
 	float AngleConvert2(float poleAngle);   //convert poleAngle to rotatedRect angle
 
 
-	void DrawArmor(Mat& frame, Point2f pt[]);
+	void DrawArmor(Mat& frame, Armor& armor, Scalar color);
+	void PrintArmorData(Mat& frame, Armor& armor);
 
 	vector<Armor> Detect(vector<RotatedRect> &LightBar, vector<Armor>&armor);
 
@@ -117,4 +120,5 @@ public:
 
 	void clean();
 	ArmorDetect();
+	~ArmorDetect();
 };

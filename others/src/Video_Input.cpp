@@ -8,6 +8,7 @@ VideoInput::VideoInput()
 {
     init();
 }
+
 VideoInput::VideoInput(const std::string &input)
 {
     origin.open(input);
@@ -20,6 +21,12 @@ VideoInput::VideoInput(const std::string &input)
         init();
     }
 }
+
+VideoInput::~VideoInput()
+{
+    std::cout << "VideoInput Released!\n";
+}
+
 bool VideoInput::init()
 {
     std::cout << "Try openning pre-defined video source \"" << INPUT_VIDEO << "\"" << std::endl;
