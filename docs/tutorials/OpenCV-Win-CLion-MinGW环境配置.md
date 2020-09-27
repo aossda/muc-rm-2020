@@ -4,37 +4,34 @@
 >
 > 修改日期：2020/3/22
 
-
-
 ---
 
-参考链接：
-
-[msys2配置记录 - 简书](https://www.jianshu.com/p/c740b71e7775)
-
-[Windows下使用msys2打造OpenCV开发环境 - 简书](https://www.jianshu.com/p/038ceee1c7af)
+> 参考链接：
+>
+> [msys2配置记录 - 简书](https://www.jianshu.com/p/c740b71e7775)
+>
+> [Windows下使用msys2打造OpenCV开发环境 - 简书](https://www.jianshu.com/p/038ceee1c7af)
 
 ---
-
 
 
 自行编译的方法：
 
 一、预先安装与准备软件：
 
-(1) 64位Windows系统（XP系统以上）
+- 64位Windows系统（XP系统以上）
 
-(2) **MSYS2**（模拟Linux环境命令行）
+- **MSYS2**（模拟Linux环境命令行）
 
-​     官网地址：[http://www.msys2.org/](http://www.msys2.org/)
+   官网地址：[http://www.msys2.org/](http://www.msys2.org/)
 
-​     本次下载的是`msys2-x86_64-xxxxx.exe`
+   本次下载的是`msys2-x86_64-xxxxx.exe`
 
-​     建议使用迅雷或者比特彗星等进行下载。
+   建议使用迅雷或者比特彗星等进行下载。
 
-​     （如未使用外网或者校园网，建议断开网络安装，避免卡死在  “==>Update trust Database”处）
+   （如未使用外网或者校园网，建议断开网络安装，避免卡死在  “==>Update trust Database”处）
 
-
+---
 
 1. 双击`msys2-x86_64-20180531.exe`，并点击下一步选择安装文件夹
 
@@ -104,7 +101,7 @@
    pacman -Syu
    ```
 
-   
+---
 
 执行命令：
 
@@ -120,7 +117,7 @@ mount -fo binary,noacl,posix=0,user E:\SourceFile\OpenSource\ \opensource
 
 就可简单挂载目录
 
-
+---
 
 OpenCV版本包以及对应的contrib包
 
