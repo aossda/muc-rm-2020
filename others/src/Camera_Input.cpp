@@ -96,7 +96,7 @@ bool CameraInput::read(cv::Mat& input)
         cv::Mat Iimag = cv::cvarrToMat(iplImage);
         double resizet = cv::getTickCount();
 
-        resize(Iimag, input, cv::Size(640, 480));
+        resize(Iimag, input, cv::Size(FrameCols, FrameRows));
         resizet = ((double)cv::getTickCount() - resizet) / cv::getTickFrequency();
         //在成功调用CameraGetImageBuffer后，必须调用CameraReleaseImageBuffer来释放获得的buffer。
         //否则再次调用CameraGetImageBuffer时，程序将被挂起一直阻塞，直到其他线程中调用CameraReleaseImageBuffer来释放了buffer

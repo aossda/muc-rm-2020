@@ -6,115 +6,123 @@
 
 Energy::Energy()
 {
-    KF.init(stateNum, measureNum, 0);
-    KF.transitionMatrix = (Mat_<float>(stateNum, stateNum) << 1, 0, 1, 0,
-            0, 1, 0, 1,
-            0, 0, 1, 0,
-            0, 0, 0, 1);
-
-    setIdentity(KF.measurementMatrix);
-    setIdentity(KF.processNoiseCov, Scalar::all(1e-5));
-    setIdentity(KF.measurementNoiseCov, Scalar::all(1e-1));
-    setIdentity(KF.errorCovPost, Scalar::all(1));
-    randn(KF.statePost, Scalar::all(0), Scalar::all(0.1));
-
-    processNoise = Mat(stateNum, 1, CV_32F);
+    KalmanInit();
 }
 
-void Energy::start(cv::Mat &input) {
-    double btime = cv::getTickCount();
-    input.copyTo(binary);
-    input.copyTo(image);
-    resize(image, image, Size(FrameCols, FrameRows));
-    resize(binary, binary, Size(FrameCols, FrameRows));
+void Energy::KalmanInit()
+{
+	KF.init(stateNum, measureNum, 0);
+	processNoise = Mat (stateNum, 1, CV_32F); 
+	measurement = Mat::zeros(measureNum, 1, CV_32F);
 
+	KF.transitionMatrix = (Mat_<float>(stateNum, stateNum) << 1, 0, 1, 0,
+		0, 1, 0, 1,
+		0, 0, 1, 0,
+		0, 0, 0, 1);
+
+	setIdentity(KF.measurementMatrix);
+	setIdentity(KF.processNoiseCov, Scalar::all(1e-5));
+	setIdentity(KF.measurementNoiseCov, Scalar::all(1e-1));
+	setIdentity(KF.errorCovPost, Scalar::all(1));
+	randn(KF.statePost, Scalar::all(0), Scalar::all(0.1));
+}
+cv::Point2d Energy::KalmanFind(cv::Mat & image)
+{
+    image.copyTo(binary);
+
+    resize(image, image, Size(image.cols * 0.7, binary.rows * 0.7));
+	resize(binary, binary, Size(binary.cols * 0.7, binary.rows * 0.7));
+        
     cvtColor(image, image, COLOR_BGR2GRAY);
 
-    threshold(image, image, 80, 255, THRESH_BINARY);
+	threshold(image, image, 80, 255, THRESH_BINARY);        
 
-    dilate(image, image, Mat());
-    dilate(image, image, Mat());
+	dilate(image, image, Mat());
+	dilate(image, image, Mat());
 
-    floodFill(image, Point(5, 50), Scalar(255), 0, FLOODFILL_FIXED_RANGE);
+	floodFill(image, Point(5, 50), Scalar(255), 0, FLOODFILL_FIXED_RANGE);
 
-    threshold(image, image, 80, 255, THRESH_BINARY_INV);
-}
+	threshold(image, image, 80, 255, THRESH_BINARY_INV);
 
-cv::Point2d Energy::get_target_Kalman()
-{
+	vector<vector<Point>> contours;
+	findContours(image, contours, RETR_LIST, CHAIN_APPROX_NONE);
+	for (size_t i = 0; i < contours.size(); i++) {
 
-    vector<vector<Point>> contours;
-    findContours(image, contours, RETR_LIST, CHAIN_APPROX_NONE);
-    for (size_t i = 0; i < contours.size(); i++) {
+	    vector<Point> points;
+	    double area = contourArea(contours[i]);
+	    if (area < 50 || 1e4 < area) continue;
+		drawContours(image, contours, static_cast<int>(i), Scalar(0), 2);
 
-        vector<Point> points;
-        double area = contourArea(contours[i]);
-        if (area < 50 || 1e4 < area) continue;
-        drawContours(image, contours, static_cast<int>(i), Scalar(0), 2);
+		points = contours[i];
+		RotatedRect rrect = fitEllipse(points);
+		cv::Point2f* vertices = new cv::Point2f[4];
+		rrect.points(vertices);
 
-        points = contours[i];
-        rrect = fitEllipse(points);
-        cv::Point2f *vertices = new cv::Point2f[4];
-        rrect.points(vertices);
+		float aim = rrect.size.height / rrect.size.width;
+		if (aim > 1.7 && aim < 2.6) {
+			for (int j = 0; j < 4; j++) {
+				cv::line(binary, vertices[j], vertices[(j + 1) % 4], cv::Scalar(0, 255, 0), 4);
+			}
+			float middle = 100000;
 
-        float aim = rrect.size.height / rrect.size.width;
-        if (aim > 1.7 && aim < 2.6) {
-            for (int j = 0; j < 4; j++) {
-                cv::line(binary, vertices[j], vertices[(j + 1) % 4], cv::Scalar(0, 255, 0), 4);
-            }
-            float middle = 100000;
+			for (size_t j = 1; j < contours.size(); j++) {
 
-            for (size_t j = 1; j < contours.size(); j++) {
+				vector<Point> pointsA;
+				double area = contourArea(contours[j]);
+				if (area < 50 || 1e4 < area) continue;
 
-                vector<Point> pointsA;
-                double area = contourArea(contours[j]);
-                if (area < 50 || 1e4 < area) continue;
+				pointsA = contours[j];
 
-                pointsA = contours[j];
+				RotatedRect rrectA = fitEllipse(pointsA);
 
-                RotatedRect rrectA = fitEllipse(pointsA);
+				float aimA = rrectA.size.height / rrectA.size.width;
 
-                float aimA = rrectA.size.height / rrectA.size.width;
+				if (aimA > 3.0) {
+					float distance = sqrt((rrect.center.x - rrectA.center.x) * (rrect.center.x - rrectA.center.x) +
+						                  (rrect.center.y - rrectA.center.y) * (rrect.center.y - rrectA.center.y));
 
-                if (aimA > 3.0) {
-                    float distance = sqrt((rrect.center.x - rrectA.center.x) * (rrect.center.x - rrectA.center.x) +
-                                          (rrect.center.y - rrectA.center.y) * (rrect.center.y - rrectA.center.y));
+					if (middle > distance)
+						middle = distance;
+				}
+			}
+			if (middle > 60) {                            
+				cv::circle(binary, Point(rrect.center.x, rrect.center.y), 10, cv::Scalar(0, 0, 255), 4);
+				Mat prediction = KF.predict();
+				Point predict_pt = Point((int)prediction.at<float>(0), (int)prediction.at<float>(1));
 
-                    if (middle > distance)
-                        middle = distance;
-                }
-            }
-            if (middle > 60) {
-                cv::circle(binary, Point(rrect.center.x, rrect.center.y), 10, cv::Scalar(0, 0, 255), 4);
-                Mat prediction = KF.predict();
-                Point predict_pt = Point((int) prediction.at<float>(0), (int) prediction.at<float>(1));
+				measurement.at<float>(0) = (float)rrect.center.x;
+				measurement.at<float>(1) = (float)rrect.center.y;
+				KF.correct(measurement);
 
-                measurement.at<float>(0) = (float) rrect.center.x;
-                measurement.at<float>(1) = (float) rrect.center.y;
-                KF.correct(measurement);
+				circle(binary, predict_pt, 3, Scalar(34, 255, 255), -1);
 
-                circle(binary, predict_pt, 3, Scalar(34, 255, 255), -1);
-
-                rrect.center.x = (int) prediction.at<float>(0);
-                rrect.center.y = (int) prediction.at<float>(1);
+				rrect.center.x = (int)prediction.at<float>(0);
+				rrect.center.y = (int)prediction.at<float>(1);
                 return Point2d(rrect.center.x, rrect.center.y);
-            }
-        }
-    }
+			}
+		}
+	}
     if (debug)
     {
-        imshow("frame", binary);
-        imshow("Original", image);
-        //btime = ((double)cv::getTickCount() - btime) / cv::getTickFrequency();
-        //cout << "time:" << (1000 * btime) << "ms" << endl;
+        imshow("binary", binary);
+        //imshow("view", image);
         cout<<"target :"<< rrect.center <<endl;
         waitKey(1);
     }
     return Point2d(0,0);
 }
 
-cv::Point2d Energy::get_target_min2X()
+cv::Point2d Energy::Min2XFind(cv::Mat & image)
 {
+	//image.copyTo(binary);
+    binary = image.clone();
+	//resize(image, image, Size(image.cols * 0.7, image.rows * 0.7));
+	//resize(binary, binary, Size(binary.cols * 0.7, binary.rows * 0.7));
+
+	vector<Mat> channels;
+	split(binary, channels);
+	threshold(channels.at(2) - channels.at(0), binary, 100, 255, CV_THRESH_BINARY_INV);
+
     Mat element1 = getStructuringElement(MORPH_RECT, Size(5, 5));
     Mat element2 = getStructuringElement(MORPH_RECT, Size(25, 25));
     morphologyEx(binary, binary, MORPH_OPEN, element1);
@@ -145,14 +153,14 @@ cv::Point2d Energy::get_target_min2X()
             Point2d c;
             double r = 0;
             LeastSquaresCircleFitting(points, c, r);
-            //circle(image, c, r, Scalar(0, 0, 255), 2, 8);
-            //circle(image, c, 5, Scalar(255, 0, 0), -1, 8);
+            circle(image, c, r, Scalar(0, 0, 255), 2, 8); //Draw the circle
+            circle(image, c, 5, Scalar(255, 0, 0), -1, 8);
         }
     }
     if(debug)
     {
-        imshow("frame", binary);
-        imshow("Original", image);
+        imshow("binary", binary);
+        //imshow("view", image);
         waitKey(1);
     }
     return target;
@@ -178,15 +186,15 @@ int Energy::LeastSquaresCircleFitting(vector<cv::Point2d>& m_Points, cv::Point2d
         vector<cv::Point2d>::iterator end = m_Points.end();
         for (iter = m_Points.begin(); iter != end; ++iter)
         {
-            X1 = X1 + (*iter).x;
-            Y1 = Y1 + (*iter).y;
-            X2 = X2 + (*iter).x * (*iter).x;
-            Y2 = Y2 + (*iter).y * (*iter).y;
-            X3 = X3 + (*iter).x * (*iter).x * (*iter).x;
-            Y3 = Y3 + (*iter).y * (*iter).y * (*iter).y;
-            X1Y1 = X1Y1 + (*iter).x * (*iter).y;
-            X1Y2 = X1Y2 + (*iter).x * (*iter).y * (*iter).y;
-            X2Y1 = X2Y1 + (*iter).x * (*iter).x * (*iter).y;
+            X1 = X1 + iter->x;
+            Y1 = Y1 + iter->y;
+            X2 = X2 + iter->x * iter->x;
+            Y2 = Y2 + iter->y * iter->y;
+            X3 = X3 + iter->x * iter->x * iter->x;
+            Y3 = Y3 + iter->y * iter->y * iter->y;
+            X1Y1 = X1Y1 + iter->x * iter->y;
+            X1Y2 = X1Y2 + iter->x * iter->y * iter->y;
+            X2Y1 = X2Y1 + iter->x * iter->x * iter->y;
         }
         double C = 0.0;
         double D = 0.0;

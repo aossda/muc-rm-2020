@@ -5,9 +5,6 @@
 #include<stdio.h>
 #include<iostream>
 
-//#define FIND_RED            1
-//#define FIND_BLUE           2
-
 #define FrameCols         640
 #define FrameRows         480
 

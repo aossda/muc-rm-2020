@@ -27,7 +27,7 @@ public:
     RotatedRect rightBar;
     float lbAngle;
     float rbAngle;
-    float data;
+    int data;
     void CalcPoints(Point2f pt2[4])//mingw环境报错？？？？
     {
         pt2[0]=Point2f(leftBar.center.x+0.5*leftBar.size.height*cos(PI*lbAngle/180)     //left up

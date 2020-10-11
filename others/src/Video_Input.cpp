@@ -4,7 +4,12 @@
 
 #include "../include/Video_Input.h"
 
-VideoInput::VideoInput(std::string &input)
+VideoInput::VideoInput()
+{
+    init();
+}
+
+VideoInput::VideoInput(const std::string &input)
 {
     origin.open(input);
     if (origin.isOpened())
@@ -16,18 +21,26 @@ VideoInput::VideoInput(std::string &input)
         init();
     }
 }
+
+VideoInput::~VideoInput()
+{
+    std::cout << "VideoInput Released!\n";
+}
+
 bool VideoInput::init()
 {
-    origin.open(0);
+    std::cout << "Try openning pre-defined video source \"" << INPUT_VIDEO << "\"" << std::endl;
+    origin.open(INPUT_VIDEO);
     if (origin.isOpened())
     {
-        printf("Old Video is opened successfully\n");
+        printf("successfully opened \"%s\"\n", INPUT_VIDEO);
         return true;
     }
     else
-        printf(" Old Video failed to open!\n");
-
-    origin.open(INPUT_VIDEO);
+        printf("Failed to open \"%s\"\n", INPUT_VIDEO);
+    
+    std::cout << "Try openning usb camera source" << std::endl;
+    origin.open(0);
     if (origin.isOpened())
     {
         printf("Usb Camera is opened successfully\n");
@@ -43,7 +56,13 @@ bool VideoInput::init()
 bool VideoInput::read(cv::Mat& input)
 {
     origin >> tmp;
-    cv::resize(tmp, input, cv::Size(640, 480));
-    return true;
+    if(tmp.empty()) {
+        std::cout << "Cannot load frame from video." << std::endl;
+        origin.release();
+        return false;
+    }
+    else {
+        cv::resize(tmp, input, cv::Size(FrameCols, FrameRows));
+        return true;
+    }
 }
-

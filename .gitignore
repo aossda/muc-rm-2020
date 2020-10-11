@@ -1,0 +1,8 @@
+.vscode/
+.vs/
+build/
+bin/
+video/
+img/
+no_use/
+xml/

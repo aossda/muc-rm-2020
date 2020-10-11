@@ -15,12 +15,11 @@ void ArmorDetect::Armor_Contours(vector<RotatedRect>& LightBar, cv::Mat& frame)
 	Detect(LightBar, armor);
 	//GetScore(armor);
 	//Choice(armor);
-
 	ArmorGrading(armor);
 	final_choice(armor);
 
-	imshow("viewing",frame0);
-	if (status == INIT_TRACKING) tracking(frame0);
+	//imshow("viewing",frame0);
+	if (if_enable_tracking && status == INIT_TRACKING) tracking(frame0);
 }
 
 float ArmorDetect::AngleConvert(float RowAngle)    //convert to poleAngle
@@ -211,6 +210,7 @@ void ArmorDetect::ArmorGrading(vector<Armor>& armors)
 				armors[i].score += 40;
 			}
 		}
+		if(print_candidates) DrawArmor(frame0, armors[i], Scalar(255,0,0));
 		//armors[i].score += armors[i].distance;
 		printf("now score: %f\n", armors[i].score);
 	}
@@ -260,7 +260,7 @@ void ArmorDetect::Choice(vector<Armor>& armor)
 		*/
 		//choice = tt[armor.size() - 1].index;
 		choice = armor.size()-1;
-		armor[choice].CalcPoints(pt);
+		//armor[choice].CalcPoints(pt);
 		if (debug)
 		{
 			//DrawArmor(frame, pt);
@@ -280,7 +280,7 @@ void ArmorDetect::Choice(vector<Armor>& armor)
 			//                        }
 			//                    }
 		}
-		DrawArmor(frame0, pt);
+		//DrawArmor(frame0, pt);
 		//cout<<"armor height = "<<armor[choice].height<<endl;
 		//cout<<"armor pro = "<<armor[choice].width/armor[choice].height<<endl;
 
@@ -436,7 +436,6 @@ void ArmorDetect::tracking(Mat& frame)
 	static int tot_tracks;
 	static int fails_in_a_raw;
 
-	//if (if_tracking == false) return;
 	if (status == INIT_TRACKING)
 	{
 		if (!generate_bbox(the_target, bbox)){
@@ -446,13 +445,11 @@ void ArmorDetect::tracking(Mat& frame)
 	}
 	/*
 	if (bbox.tl().x < 2 || bbox.tl().y < 2 {
-		if_tracking = false; 
-		if_init = false;
+		end_tracking();
 		return;
 	}
 	if (bbox.br().x > frame.cols || bbox.br().y > 0.95 * frame.rows) {
-		if_tracking = false;
-		if_init = false;
+		end_tracking();
 		return;
 	}*/
 	
@@ -465,8 +462,7 @@ void ArmorDetect::tracking(Mat& frame)
 
 	/*
 	if (bbox.area() > 0.38 * frame.rows * frame.cols) {
-		if_tracking = false;
-		if_init = false;
+		end_tracking();
 		return;
 	}*/
 
@@ -496,6 +492,7 @@ void ArmorDetect::tracking(Mat& frame)
 		double timer = (double)getTickCount();
 		//ok = tracker->update(frame, bbox);
 		ok = ecotracker->update(frame, bbox);
+		the_target.center = getRectCenter(bbox);
 		/*
 		if (tot_tracks%10==0) {
 			vector<Armor> armor;
@@ -507,8 +504,7 @@ void ArmorDetect::tracking(Mat& frame)
 			Point2d p1 = getRectCenter(tbbox);
 			Point2d p2 = getRectCenter(bbox);
 			if(abs(p1.x - p2.x) > 0.03 * frame.cols || abs(p1.y - p2.y) > 0.03 * frame.rows) {
-				if_tracking = false;
-				if_init = false;
+				end_tracking();
 				return;
 			}
 		}*/
@@ -517,7 +513,7 @@ void ArmorDetect::tracking(Mat& frame)
 
 		float fps = getTickFrequency() / ((double)getTickCount() - timer);
 		if (!ok) {
-			tot_fail++;
+			++tot_fail;
 			++fails_in_a_raw;
 			cout << "! Tracking fails ";
 			//putText(frame, "Tracking failure detected", Point(100, 80), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 0, 255), 2);
@@ -528,12 +524,12 @@ void ArmorDetect::tracking(Mat& frame)
 			fails_in_a_raw = 0;
 			//cout<<bbox<<endl;
 		}
-		//putText(frame, "Tracking", Point(100, 20), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50, 170, 50), 2);
-		//putText(frame, "FPS : " + to_string(int(fps)), Point(100, 50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50, 170, 50), 2);
+		//putText(frame, "Tracking", Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50, 170, 50), 2);
+		//putText(frame, "FPS : " + to_string(int(fps)), Point(10, 50), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(50, 170, 50), 2);
 		cout<<" @FPS: "<<(int)fps;
 		cout << "  <time> :" << 1000 * ((double)cv::getTickCount() - timer) / cv::getTickFrequency() << " ms\n";
 	}
-/**/
+
 	if (bbox.tl().x < 0 || bbox.tl().y < 0) {
 		end_tracking(); 
 	}
@@ -547,10 +543,9 @@ void ArmorDetect::tracking(Mat& frame)
 	if (ok) rectangle(frame, bbox, Scalar(0, 255, 0), 2, 1); //print in green
 	else rectangle(frame, bbox, Scalar(0, 0, 255), 2, 1); //print in red
 	circle(frame, getRectCenter(bbox), 3, Scalar(0, 0, 255), -1); //print circle
+	PrintArmorData(frame, the_target);
 	
-	//double timer = (double)getTickCount();
-	imshow("viewing", frame);
-	//cout << "  <time> :" << 1000 * ((double)cv::getTickCount() - timer) / cv::getTickFrequency() << " ms\n";
+	frame0 = frame;
 	
 	if (waitKey(1) == 27){
 		end_tracking();
@@ -576,6 +571,8 @@ void ArmorDetect::final_choice(vector<Armor>& armor)
 		if (antiShake > shakeThres)
 		{
 		}
+
+		previous_exist = false;
 	}
 	/*else
 	{//this place can be optimized
@@ -621,15 +618,68 @@ void ArmorDetect::final_choice(vector<Armor>& armor)
 			status = INIT_TRACKING;
 			last_center = Point2d(center_x, center_y);			
 		}
-		DrawArmor(frame0, the_target.pt);
+		DrawArmor(frame0, the_target, Scalar(0,0,255));
 	}
 }
 
-void ArmorDetect::DrawArmor(Mat& frame, Point2f pt[])
+void ArmorDetect::DrawArmor(Mat& frame, Armor& armor, Scalar color = Scalar(0,0,255))
 {
 	for (int i = 0; i < 4; i++)
 	{
-		line(frame, pt[i], pt[(i + 1) % 4], Scalar(0, 0, 255), 1);
+		line(frame, armor.pt[i], armor.pt[(i + 1) % 4], color, 2);
+	}
+	if (print_armor_data){
+		PrintArmorData(frame, armor);
 	}
 	//cv::imshow("xx", frame); cv::waitKey(1);
+}
+
+void ArmorDetect::PrintArmorData(Mat & frame, Armor& armor)
+{
+	if (armor.data > 0)
+	{
+		putText(frame, to_string(armor.data), Point(armor.center.x-5, armor.center.y-5), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(250, 130, 150), 2);
+	}
+	if (status != TRACKING) {
+		char score[16];
+		sprintf(score, "%.2f", armor.score);
+		putText(frame, score, Point(armor.center.x+5, armor.center.y-5), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 0, 255), 1);
+	}
+}
+
+bool ArmorDetect::enable_tracking()
+{
+	if_enable_tracking = true;
+}
+
+bool ArmorDetect::disable_tracking()
+{
+	if (if_enable_tracking || status != ARMORFIND)
+	{
+		end_tracking();
+		if_enable_tracking = false;
+	}
+}
+
+void ArmorDetect::clean()
+{
+	previous_exist = false;
+	if (status == TRACKING) {
+		end_tracking();
+	}
+	status = ARMORFIND;
+}
+
+ArmorDetect::ArmorDetect()
+{
+	parameters.useIcFeature = false;
+	parameters.max_score_threshhold = 0.30;
+	//enable_tracking();
+	disable_tracking();
+}
+
+ArmorDetect::~ArmorDetect()
+{
+	end_tracking();
+	std::cout << "ArmorDetect released!\n";
 }
